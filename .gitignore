@@ -1,0 +1,24 @@
+# Build folders
+bin/
+obj/
+out/
+debug/
+release/
+publish/
+app.publish/
+
+# Rider/IDE files
+/.idea/
+*.iml
+workspace.xml
+contentModel.xml
+modules.xml
+projectSettingsUpdater.xml
+
+# Environment files
+.env
+.env.*
+
+# Other local files
+/httpRequests/
+/dataSources/
