@@ -31,6 +31,12 @@ public static class DbSeeder
             var options = context.MealOptions.ToList();
             context.Meals.AddRange(
                 new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[0].Id },
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[1].Id },
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[2].Id },
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[1].Id },
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[0].Id },
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[0].Id },
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[2].Id },
                 new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[1].Id }
             );
             context.SaveChanges();
@@ -42,7 +48,9 @@ public static class DbSeeder
             var users = context.Users.ToList();
             context.Ratings.AddRange(
                 new Rating { Id = Guid.NewGuid(), MealId = meals[0].Id, UserId = users[0].Id, Stars = 4 },
-                new Rating { Id = Guid.NewGuid(), MealId = meals[1].Id, UserId = users[1].Id, Stars = 5 }
+                new Rating { Id = Guid.NewGuid(), MealId = meals[2].Id, UserId = users[0].Id, Stars = 3 },
+                new Rating { Id = Guid.NewGuid(), MealId = meals[1].Id, UserId = users[1].Id, Stars = 4 },
+                new Rating { Id = Guid.NewGuid(), MealId = meals[0].Id, UserId = users[1].Id, Stars = 5 }
             );
             context.SaveChanges();
         }

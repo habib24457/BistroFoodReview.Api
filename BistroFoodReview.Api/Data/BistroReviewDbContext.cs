@@ -33,14 +33,14 @@ public class BistroReviewDbContext : DbContext
             .HasForeignKey(r => r.MealId)
             .OnDelete(DeleteBehavior.Cascade); //ratings cannot exist without a user/meal, so if the corresponding meal/user is deleted, rating is also deleted
         
-        //One mealOption contains many meals
+        //One mealOption can be many meals
         modelBuilder.Entity<MealOption>()
             .HasMany(mo => mo.Meals)
             .WithOne(m => m.MealOption)
             .HasForeignKey(meal => meal.MealOptionId)
-            .OnDelete(DeleteBehavior.Restrict); //Applying cescade here would automatically delete the meals if we delete mealOption. 
+            .OnDelete(DeleteBehavior.Restrict); //If apply cescade here, that would automatically delete the meals if we delete mealOption. 
         
-        //A user can rate only a meal once a day
+        //A user can rate only a meal
         modelBuilder.Entity<Rating>()
             .HasIndex(r => new { r.MealId, r.UserId })
             .IsUnique();
