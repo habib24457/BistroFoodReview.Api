@@ -26,6 +26,12 @@ public class AutoMapperProfiles:Profile
             .ForMember(dest => dest.EditedMealName,
                 opt => opt.MapFrom(src => src.EditedMealName));
         
+        CreateMap<UpdateMealNameDto, Meal>()
+            .ForMember(dest => dest.EditedMealName, opt => opt.MapFrom(src => src.EditedMealName));
+
+        CreateMap<Meal, DailyMealMenuDto>()
+            .ForMember(dest => dest.MealOptionName, opt => opt.MapFrom(src => src.MealOption.Name));
+        
         CreateMap<User, UserDto>();
         CreateMap<User, UserWithRatingsDto>();
 
