@@ -29,11 +29,14 @@ public class AutoMapperProfiles:Profile
                 opt => opt.MapFrom(src => src.EditedMealName));
         
         CreateMap<UpdateMealNameDto, Meal>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MealId)) 
-            .ForMember(dest => dest.MealOptionId, opt => opt.MapFrom(src => src.MealOptionId))
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.MealDate))
             .ForMember(dest => dest.EditedMealName, opt => opt.MapFrom(src => src.EditedMealName));
-
+        
+        CreateMap<CreateMealDto, Meal>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+            .ForMember(dest => dest.MealOptionId, opt => opt.MapFrom(src => src.MealOptionId))
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+            .ForMember(dest => dest.EditedMealName, opt => opt.MapFrom(src => src.EditedMealName));
+        
         CreateMap<Meal, DailyMealMenuDto>()
             .ForMember(dest => dest.MealOptionName, opt => opt.MapFrom(src => src.MealOption.Name));
         
