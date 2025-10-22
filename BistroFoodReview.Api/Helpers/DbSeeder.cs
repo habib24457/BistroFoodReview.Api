@@ -30,14 +30,11 @@ public static class DbSeeder
         {
             var options = context.MealOptions.ToList();
             context.Meals.AddRange(
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[0].Id },
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[1].Id },
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[2].Id },
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[1].Id },
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[0].Id },
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[0].Id },
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[2].Id },
-                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[1].Id }
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[0].Id, EditedMealName = "EditedName1"},
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[1].Id,EditedMealName = "EditedName2" },
+                new Meal { Id = Guid.NewGuid(), Date = DateTime.UtcNow, MealOptionId = options[2].Id,EditedMealName = "EditedName3" }
+                
+                //for each day there can be three meals
             );
             context.SaveChanges();
         }

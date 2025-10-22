@@ -12,7 +12,6 @@ public interface IMealRepository
     public Task<List<Meal>> GetTopMealsAsync();
     public Task<List<Meal>> GetDailyMenuAsync(DateTime date);
     public Task<Meal?> AddOrUpdateMealNameAsync(Guid mealId,Guid mealOptionId, DateTime mealDate, string editedMealName);
-    //Autocomplete
 }
 
 public class MealRepository(BistroReviewDbContext bistroReviewDbContext):IMealRepository
