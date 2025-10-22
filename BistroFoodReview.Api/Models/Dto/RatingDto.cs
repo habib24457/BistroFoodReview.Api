@@ -7,5 +7,5 @@ public class RatingDto
     public DateTime MealDate { get; set; }  
     public string MealOptionName { get; set; } = string.Empty;
     public string? EditedMealName { get; set; }
-    public int Stars { get; set; }  
+    public double Stars { get; set; }  
 }

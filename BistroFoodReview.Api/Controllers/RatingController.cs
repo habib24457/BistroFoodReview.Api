@@ -8,16 +8,25 @@ namespace BistroFoodReview.Api.Controllers;
 
 [Route("api/[controller]")]
 [Controller]
-public class RatingController(IRatingRepository ratingRepository,IMealRepository mealRepository,IMapper mapper):ControllerBase
+public class RatingController(
+    IRatingRepository ratingRepository,
+    IMealRepository mealRepository,
+    IMapper mapper, 
+    ILogger<RatingController>logger):ControllerBase
 {
 
     [HttpGet("ratings")]
     public async Task<IActionResult> GetAllRatings()
     {
+        logger.LogInformation("Fetching all ratings");
         var ratings = await ratingRepository.GetAllRatingAsync();
         if (ratings == null)
+        {
+            logger.LogWarning("No ratings found in the database");
             return NotFound();
+        }
         var ratingsDto = mapper.Map<List<RatingDto>>(ratings);
+        logger.LogInformation("Retrieved {Count} ratings from the database", ratingsDto.Count);
         return Ok(ratingsDto);
     }
     
@@ -47,20 +56,34 @@ public class RatingController(IRatingRepository ratingRepository,IMealRepository
     private async Task<Meal?> ValidateRatingAsync(CreateRatingDto dto)
     {
         if (dto.Stars < 1 || dto.Stars > 5)
+        {
+            logger.LogWarning("Invalid rating value {Stars} for MealId {MealId} by UserId {UserId}", 
+                dto.Stars, dto.MealId, dto.UserId);
             throw new BadHttpRequestException("Stars must be in between 1 and 5");
+        }
 
         var meal = await mealRepository.GetMealByIdAsync(dto.MealId);
         if (meal == null)
+        {
+            logger.LogWarning("Meal with Id {MealId} not found when UserId {UserId} attempted rating", 
+                dto.MealId, dto.UserId);
             throw new BadHttpRequestException("The selected meal is not available");
+        }
 
         if (meal.Date.Date != DateTime.UtcNow.Date)
+        {
+            logger.LogWarning("You can only rate meals that are available for today");
             throw new BadHttpRequestException("You can only rate meals that are available for today");
+        }
 
         var existingRating = await ratingRepository
             .GetExistingRatingForUserAndMealOptionAsync(dto.UserId, meal.MealOptionId);
 
         if (existingRating != null)
+        {
+            logger.LogWarning("You have already rated this meal option today.");
             throw new BadHttpRequestException("You have already rated this meal option today.");
+        }
 
         return meal;
     }        

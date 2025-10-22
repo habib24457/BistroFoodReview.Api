@@ -8,5 +8,5 @@ public class Rating
     public Guid UserId { get; set; }
     public User User { get; set; }
     
-    public int Stars { get; set; }
+    public double Stars { get; set; }
 }

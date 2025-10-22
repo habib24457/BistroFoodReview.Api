@@ -48,6 +48,8 @@ public class AutoMapperProfiles:Profile
         CreateMap<User, UserWithRatingsDto>();
 
         /*Rating Mappings*/
+        CreateMap<Rating, RatingDto>();
+        CreateMap<Rating, MinimalisticRatingDto>();
         CreateMap<Rating, RatingDto>()
             .ForMember(dest => dest.MealDate,
                 opt => opt.MapFrom(src => src.Meal.Date))

@@ -7,5 +7,5 @@ public class DailyMealMenuDto
     public string MealOptionName { get; set; } = string.Empty; 
     public string? EditedMealName { get; set; }    
     
-    public List<RatingDto> Ratings { get; set; } = new();
+    public List<MinimalisticRatingDto> Ratings { get; set; } = new();
 }

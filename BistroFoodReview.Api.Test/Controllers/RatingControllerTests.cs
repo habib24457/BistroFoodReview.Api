@@ -6,6 +6,7 @@ using BistroFoodReview.Api.Models.Dto;
 using BistroFoodReview.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace BistroFoodReview.Api.Test.Controllers;
@@ -44,6 +45,7 @@ public class RatingControllerTests
 
         var mealRepo = new MealRepository(context);
         var ratingRepo = new RatingRepository(context);
+        var logger = Substitute.For<ILogger<RatingController>>();
 
         // Mock mapper
         var mapper = Substitute.For<IMapper>();
@@ -77,7 +79,7 @@ public class RatingControllerTests
         mapper.Map<Rating>(createRatingDto).Returns(ratingEntity);
         mapper.Map<RatingDto>(Arg.Any<Rating>()).Returns(ratingDto);
 
-        var controller = new RatingController(ratingRepo, mealRepo, mapper);
+        var controller = new RatingController(ratingRepo, mealRepo, mapper, logger);
 
         // Act
         controller.SaveRating(createRatingDto);
