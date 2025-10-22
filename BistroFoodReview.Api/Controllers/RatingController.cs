@@ -46,9 +46,9 @@ public class RatingController(
     public async Task<IActionResult> SaveRating([FromBody] CreateRatingDto createRatingDto)
     {
         await ValidateRatingAsync(createRatingDto);
-        var ratingEntity = mapper.Map<Rating>(createRatingDto);
-        ratingEntity.Id = Guid.NewGuid();
-        var createdRating = await ratingRepository.SaveRatingAsync(ratingEntity);
+        var ratingDomain = mapper.Map<Rating>(createRatingDto);
+        ratingDomain.Id = Guid.NewGuid();
+        var createdRating = await ratingRepository.SaveRatingAsync(ratingDomain);
         var ratingDto = mapper.Map<RatingDto>(createdRating);
         return CreatedAtAction(nameof(SaveRating), new { id = ratingDto.Id }, ratingDto);
     }
