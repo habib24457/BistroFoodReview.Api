@@ -4,6 +4,7 @@ using BistroFoodReview.Api.Models.Domain;
 using BistroFoodReview.Api.Models.Dto;
 using BistroFoodReview.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace BistroFoodReview.Api.Test.Controllers;
@@ -15,6 +16,7 @@ public class MealControllerTests
     {
         // Arrange
         var mealRepo = Substitute.For<IMealRepository>();
+        var logger = Substitute.For<ILogger<MealController>>();
         var mapper = Substitute.For<IMapper>();
         var today = DateTime.UtcNow.Date;
         
@@ -30,7 +32,7 @@ public class MealControllerTests
             .Select(m => new DailyMealMenuDto { Id = m.Id, EditedMealName = m.EditedMealName })
             .ToList();
         mapper.Map<List<DailyMealMenuDto>>(Arg.Any<List<Meal>>()).Returns(sampleMealsDto);
-        var controller = new MealController(mealRepo, mapper);
+        var controller = new MealController(mealRepo, mapper,logger);
 
         // Act
         var result = await controller.GetDailyMealMenu();
@@ -47,7 +49,8 @@ public class MealControllerTests
         // Arrange
         var mealRepo = Substitute.For<IMealRepository>();
         var mapper = Substitute.For<IMapper>();
-        
+        var logger = Substitute.For<ILogger<MealController>>();
+
         var meal1 = new Meal
         {
             Id = Guid.NewGuid(),
@@ -85,7 +88,7 @@ public class MealControllerTests
 
         mapper.Map<List<TopMealDto>>(Arg.Any<List<Meal>>()).Returns(topMealsDto);
 
-        var controller = new MealController(mealRepo, mapper);
+        var controller = new MealController(mealRepo, mapper, logger);
 
         // Act
         var result = await controller.GetTopMeals();
@@ -107,7 +110,8 @@ public class MealControllerTests
         var mealRepo = Substitute.For<IMealRepository>();
         var mapper = Substitute.For<IMapper>();
         var now = DateTime.UtcNow;
-    
+        var logger = Substitute.For<ILogger<MealController>>();
+
         var meal1 = new Meal
             {
                 Id = Guid.NewGuid(),
@@ -136,7 +140,7 @@ public class MealControllerTests
                 }).ToList();
     
             mapper.Map<List<TopMealDto>>(Arg.Any<List<Meal>>()).Returns(topMealsDto);
-            var controller = new MealController(mealRepo, mapper);
+            var controller = new MealController(mealRepo, mapper, logger);
 
             // Act
             var result = await controller.GetTopMeals();
@@ -158,6 +162,8 @@ public class MealControllerTests
         //Arrange
         var mealId = Guid.NewGuid();
         var updatedName = "Updated Meal Name";
+        var logger = Substitute.For<ILogger<MealController>>();
+
         var meal = new Meal
         {
             Id = mealId,
@@ -174,14 +180,13 @@ public class MealControllerTests
                 return Task.FromResult(meal);
             });
         
-        var controller = new MealController(mealRepo,mapper);
+        var controller = new MealController(mealRepo,mapper, logger);
         
         //Act
         var result = await controller.UpdateMealName(mealId, new UpdateMealNameDto
         {
             EditedMealName = updatedName
         });
-        
         
         //Assert
         var expectedMeal = meal;
@@ -199,11 +204,12 @@ public class MealControllerTests
         var mealId = Guid.NewGuid();
         var updatedName = "Updated Meal Name";
         var mapper = Substitute.For<IMapper>();
+        var logger = Substitute.For<ILogger<MealController>>();
         var mealRepo = Substitute.For<IMealRepository>();
         mealRepo.UpdateMealNameAsync(mealId, updatedName)
             .Returns(Task.FromResult<Meal?>(null)); 
 
-        var controller = new MealController(mealRepo,mapper);
+        var controller = new MealController(mealRepo,mapper, logger);
 
         // Act
         var result = await controller.UpdateMealName(mealId, new UpdateMealNameDto

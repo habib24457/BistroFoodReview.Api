@@ -8,7 +8,11 @@ namespace BistroFoodReview.Api.Controllers;
 
 [Route("api/meal")]
 [ApiController]
-public class MealController(IMealRepository mealRepository, IMapper mapper):ControllerBase
+public class MealController(
+    IMealRepository mealRepository, 
+    IMapper mapper,
+    ILogger<MealController>logger
+    ):ControllerBase
 {
     [HttpGet("allMeal")]
     public async Task<IActionResult> GetAllMeals()
@@ -65,9 +69,21 @@ public class MealController(IMealRepository mealRepository, IMapper mapper):Cont
 
         if (updatedMeal == null)
         {
+            logger.LogWarning("Attempted to update meal name for non-existing meal with ID {MealId}", id);
             return NotFound("Meal Not Found");
         }
 
         return Ok(updatedMeal);
+    }
+    
+    [HttpGet("autocomplete")]
+    public async Task<IActionResult> Autocomplete([FromQuery] string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return BadRequest("Query cannot be empty.");
+
+        var mealNames = await mealRepository.GetMealNeamesForAutoCompleteByQuery(query);
+        var result = mealNames.Select(m => new AutoCompleteMealNameDto { MealName = m }).ToList();
+        return Ok(result);
     }
 }

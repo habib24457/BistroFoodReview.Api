@@ -14,6 +14,7 @@ public interface IMealRepository
     public Task<Meal> CreateMealAsync(Guid mealOptionId, DateTime mealDate, string mealName);
     public Task<Meal?> UpdateMealNameAsync(Guid mealId, string editedName);
     public Task<Meal?> AddOrUpdateMealNameAsync(Guid mealId,Guid mealOptionId, DateTime mealDate, string editedMealName);
+    public Task<List<string>> GetMealNeamesForAutoCompleteByQuery(string mealNameQuery);
 }
 
 public class MealRepository(BistroReviewDbContext bistroReviewDbContext):IMealRepository
@@ -116,5 +117,16 @@ public class MealRepository(BistroReviewDbContext bistroReviewDbContext):IMealRe
 
         await bistroReviewDbContext.SaveChangesAsync();
         return meal;
+    }
+
+    public async Task<List<string?>> GetMealNeamesForAutoCompleteByQuery(string mealNameQuery)
+    {
+        return await bistroReviewDbContext.Meals
+            .Where(m => !string.IsNullOrEmpty(m.EditedMealName) &&
+                        m.EditedMealName.ToLower().Contains(mealNameQuery.ToLower()))
+            .Select(m => m.EditedMealName)
+            .Distinct()
+            .Take(3)
+            .ToListAsync();
     }
 }
