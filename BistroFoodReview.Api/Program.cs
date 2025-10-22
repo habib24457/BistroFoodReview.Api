@@ -42,12 +42,12 @@ var app = builder.Build();
 app.UseCors("AllowFrontend");
 
 /*Seed data*/
-
+/*
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BistroReviewDbContext>();
     DbSeeder.InitializeSeeding(context);
-}
+}*/
 
 /*Delete seeded data*/
 /*

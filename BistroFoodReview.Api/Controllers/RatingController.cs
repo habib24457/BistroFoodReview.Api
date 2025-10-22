@@ -15,7 +15,7 @@ public class RatingController(
     ILogger<RatingController>logger):ControllerBase
 {
 
-    [HttpGet("ratings")]
+    [HttpGet("allRatings")]
     public async Task<IActionResult> GetAllRatings()
     {
         logger.LogInformation("Fetching all ratings");
