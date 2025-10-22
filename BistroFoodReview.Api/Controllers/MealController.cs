@@ -43,17 +43,31 @@ public class MealController(IMealRepository mealRepository, IMapper mapper):Cont
         return Ok(dailyMealsMenuDto);
     }
     
-    [HttpPut("editName")]
-    public async Task<IActionResult> AddOrUpdateMealName([FromBody] UpdateMealNameDto dto)
+    [HttpPost("createMeal")]
+    public async Task<IActionResult> CreateMeal([FromBody] CreateMealDto dto)
     {
-        var updatedMeal = await mealRepository.AddOrUpdateMealNameAsync(
-            dto.MealId,
-            dto.MealOptionId, 
-            dto.MealDate, 
-            dto.EditedMealName
-        );
+        try
+        {
+            var newMeal = await mealRepository.CreateMealAsync(dto.MealOptionId, dto.Date, dto.EditedMealName);
+            return CreatedAtAction(nameof(CreateMeal), new { mealId = newMeal.Id }, newMeal);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 
-        var mealDto = mapper.Map<DailyMealMenuDto>(updatedMeal);
-        return Ok(mealDto);
+    
+    [HttpPut("editName/{id:Guid}")]
+    public async Task<IActionResult>UpdateMealName([FromRoute] Guid id,[FromBody] UpdateMealNameDto dto)
+    {
+        var updatedMeal = await mealRepository.UpdateMealNameAsync(id, dto.EditedMealName);
+
+        if (updatedMeal == null)
+        {
+            return NotFound("Meal Not Found");
+        }
+
+        return Ok(updatedMeal);
     }
 }

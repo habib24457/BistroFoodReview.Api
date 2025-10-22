@@ -101,54 +101,119 @@ public class MealControllerTests
     }
     
     [Fact]
-public async Task GetTopMeal_ShouldHandleTieInAverageRating()
-{
-    // Arrange
-    var mealRepo = Substitute.For<IMealRepository>();
-    var mapper = Substitute.For<IMapper>();
-    var now = DateTime.UtcNow;
+    public async Task GetTopMeal_ShouldHandleTieInAverageRating()
+    {
+        // Arrange
+        var mealRepo = Substitute.For<IMealRepository>();
+        var mapper = Substitute.For<IMapper>();
+        var now = DateTime.UtcNow;
     
-    var meal1 = new Meal
-    {
-        Id = Guid.NewGuid(),
-        Date = now,
-        EditedMealName = "Meal 1",
-        Ratings = new List<Rating> { new Rating { Stars = 4 }, new Rating { Stars = 5 } }, //Avg 4.5
-        MealOption = new MealOption { Name = "Option A" }
-    };
+        var meal1 = new Meal
+            {
+                Id = Guid.NewGuid(),
+                Date = now,
+                EditedMealName = "Meal 1",
+                Ratings = new List<Rating> { new Rating { Stars = 4 }, new Rating { Stars = 5 } }, //Avg 4.5
+                MealOption = new MealOption { Name = "Option A" }
+            };
 
-    var meal2 = new Meal
-    {
-        Id = Guid.NewGuid(),
-        Date = now,
-        EditedMealName = "Meal 2",
-        Ratings = new List<Rating> { new Rating { Stars = 5 }, new Rating { Stars = 4 } }, // avg 4.5
-        MealOption = new MealOption { Name = "Option B" }
-    };
+        var meal2 = new Meal
+            {
+                Id = Guid.NewGuid(),
+                Date = now,
+                EditedMealName = "Meal 2",
+                Ratings = new List<Rating> { new Rating { Stars = 5 }, new Rating { Stars = 4 } }, // avg 4.5
+                MealOption = new MealOption { Name = "Option B" }
+            };
 
-    var topMeals = new List<Meal> { meal1, meal2 };
-    mealRepo.GetTopMealsAsync().Returns(Task.FromResult(topMeals));
-    var topMealsDto = topMeals.Select(m => new TopMealDto
-    {
-        Date = m.Date,
-        MealOptionName = m.MealOption.Name,
-        AverageRating = m.Ratings.Average(r => r.Stars)
-    }).ToList();
+            var topMeals = new List<Meal> { meal1, meal2 };
+            mealRepo.GetTopMealsAsync().Returns(Task.FromResult(topMeals));
+            var topMealsDto = topMeals.Select(m => new TopMealDto
+                {
+                    Date = m.Date,
+                    MealOptionName = m.MealOption.Name,
+                    AverageRating = m.Ratings.Average(r => r.Stars)
+                }).ToList();
     
-    mapper.Map<List<TopMealDto>>(Arg.Any<List<Meal>>()).Returns(topMealsDto);
-    var controller = new MealController(mealRepo, mapper);
+            mapper.Map<List<TopMealDto>>(Arg.Any<List<Meal>>()).Returns(topMealsDto);
+            var controller = new MealController(mealRepo, mapper);
 
-    // Act
-    var result = await controller.GetTopMeals();
+            // Act
+            var result = await controller.GetTopMeals();
 
-    // Assert
-    var okResult = Assert.IsType<OkObjectResult>(result);
-    var returned = Assert.IsAssignableFrom<List<TopMealDto>>(okResult.Value);
-    Assert.Equal(2, returned.Count);
-    Assert.Equal(4.5, returned[0].AverageRating);
-    Assert.Equal(4.5, returned[1].AverageRating);
-    var names = returned.Select(m => m.MealOptionName).ToList();
-    Assert.Contains("Option A", names);
-    Assert.Contains("Option B", names);
-}
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returned = Assert.IsAssignableFrom<List<TopMealDto>>(okResult.Value);
+            Assert.Equal(2, returned.Count);
+            Assert.Equal(4.5, returned[0].AverageRating);
+            Assert.Equal(4.5, returned[1].AverageRating);
+            var names = returned.Select(m => m.MealOptionName).ToList();
+            Assert.Contains("Option A", names);
+            Assert.Contains("Option B", names);
+        }
+
+    [Fact]
+    public async Task UpdateMealName_ShouldUpdate_IfMealExist()
+    {
+        //Arrange
+        var mealId = Guid.NewGuid();
+        var updatedName = "Updated Meal Name";
+        var meal = new Meal
+        {
+            Id = mealId,
+            EditedMealName = "Old Name",
+            MealOptionId = Guid.NewGuid(),
+            Date = DateTime.UtcNow
+        };
+        var mapper = Substitute.For<IMapper>();
+        var mealRepo = Substitute.For<IMealRepository>();
+        mealRepo.UpdateMealNameAsync(mealId, updatedName)
+            .Returns(callInfo =>
+            {
+                meal.EditedMealName = updatedName;
+                return Task.FromResult(meal);
+            });
+        
+        var controller = new MealController(mealRepo,mapper);
+        
+        //Act
+        var result = await controller.UpdateMealName(mealId, new UpdateMealNameDto
+        {
+            EditedMealName = updatedName
+        });
+        
+        
+        //Assert
+        var expectedMeal = meal;
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var actualMeal = Assert.IsType<Meal>(okResult.Value);
+        Assert.Equal(expectedMeal.Id, actualMeal.Id);
+        Assert.Equal(updatedName, actualMeal.EditedMealName);
+        await mealRepo.Received(1).UpdateMealNameAsync(mealId, updatedName);
+    }
+    
+    [Fact]
+    public async Task UpdateMealName_ShouldReturnNotFound_IfMealDoesNotExist()
+    {
+        // Arrange
+        var mealId = Guid.NewGuid();
+        var updatedName = "Updated Meal Name";
+        var mapper = Substitute.For<IMapper>();
+        var mealRepo = Substitute.For<IMealRepository>();
+        mealRepo.UpdateMealNameAsync(mealId, updatedName)
+            .Returns(Task.FromResult<Meal?>(null)); 
+
+        var controller = new MealController(mealRepo,mapper);
+
+        // Act
+        var result = await controller.UpdateMealName(mealId, new UpdateMealNameDto
+        {
+            EditedMealName = updatedName
+        });
+
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal("Meal Not Found", notFoundResult.Value);
+        await mealRepo.Received(1).UpdateMealNameAsync(mealId, updatedName);
+    }
 }

@@ -11,6 +11,8 @@ public interface IMealRepository
     public Task<Meal> GetMealByIdAsync(Guid id);
     public Task<List<Meal>> GetTopMealsAsync();
     public Task<List<Meal>> GetDailyMenuAsync(DateTime date);
+    public Task<Meal> CreateMealAsync(Guid mealOptionId, DateTime mealDate, string mealName);
+    public Task<Meal?> UpdateMealNameAsync(Guid mealId, string editedName);
     public Task<Meal?> AddOrUpdateMealNameAsync(Guid mealId,Guid mealOptionId, DateTime mealDate, string editedMealName);
 }
 
@@ -58,6 +60,38 @@ public class MealRepository(BistroReviewDbContext bistroReviewDbContext):IMealRe
             .Where(m => m.Date.Date == date.Date)
             .OrderBy(m => m.MealOption.Name)
             .ToListAsync();
+    }
+    
+    public async Task<Meal> CreateMealAsync(Guid mealOptionId, DateTime mealDate, string mealName)
+    {
+        var existingMeal = await bistroReviewDbContext.Meals
+            .FirstOrDefaultAsync(m => m.MealOptionId == mealOptionId && m.Date.Date == mealDate.Date);
+        if (existingMeal != null)
+        {
+            throw new InvalidOperationException("Meal already exists for this MealOption and for date: "+mealDate.Date);
+        }
+
+        var newMeal = new Meal
+        {
+            Id = Guid.NewGuid(),
+            MealOptionId = mealOptionId,
+            Date = mealDate.Date,
+            EditedMealName = mealName
+        };
+        
+        bistroReviewDbContext.Meals.AddAsync(newMeal);
+        await bistroReviewDbContext.SaveChangesAsync();
+        return newMeal;
+    }
+
+    public async Task<Meal?> UpdateMealNameAsync(Guid mealId, string editedName)
+    {
+        var meal = await bistroReviewDbContext.Meals.FindAsync(mealId);
+        if (meal == null)
+            return null;
+        meal.EditedMealName = editedName;
+        await bistroReviewDbContext.SaveChangesAsync();
+        return meal;
     }
     
     public async Task<Meal?> AddOrUpdateMealNameAsync(Guid mealId,Guid mealOptionId, DateTime mealDate, string editedMealName)
