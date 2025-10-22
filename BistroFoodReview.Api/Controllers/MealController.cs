@@ -17,6 +17,14 @@ public class MealController(IMealRepository mealRepository, IMapper mapper):Cont
         var mealsDto = mapper.Map<List<MealDto>>(meals);
         return Ok(mealsDto);
     }
+    
+    [HttpGet("mealOptions")]
+    public async Task<IActionResult> GetMealOptions()
+    {
+        var mealOptions = await mealRepository.GetAllMealOptionAsync();
+        var mealOptionsDto = mapper.Map<List<MealOptionDto>>(mealOptions);
+        return Ok(mealOptionsDto);
+    }
 
     [HttpGet("topMeal")]
     public async Task<IActionResult> GetTopMeals()
@@ -30,18 +38,22 @@ public class MealController(IMealRepository mealRepository, IMapper mapper):Cont
     public async Task<IActionResult> GetDailyMealMenu()
     {
         var targetDate = DateTime.UtcNow.Date;
-        var dailyMealsMenu = await mealRepository.GetDailyMealMenuAsync(targetDate);
+        var dailyMealsMenu = await mealRepository.GetDailyMenuAsync(targetDate);
         var dailyMealsMenuDto = mapper.Map<List<DailyMealMenuDto>>(dailyMealsMenu);
         return Ok(dailyMealsMenuDto);
     }
     
-    [HttpPut]
-    [Route("{id:Guid}/editName")]
-    public async Task<IActionResult> UpdateMealName([FromRoute] Guid id, [FromBody] UpdateMealNameDto updateDto)
+    [HttpPut("editName")]
+    public async Task<IActionResult> AddOrUpdateMealName([FromBody] UpdateMealNameDto dto)
     {
-        var mealDomain = mapper.Map<Meal>(updateDto);
-        var updatedMeal = await mealRepository.UpdateMealNameAsync(id, mealDomain);
+        var updatedMeal = await mealRepository.AddOrUpdateMealNameAsync(
+            dto.MealId,
+            dto.MealOptionId, 
+            dto.MealDate, 
+            dto.EditedMealName
+        );
+
         var mealDto = mapper.Map<DailyMealMenuDto>(updatedMeal);
         return Ok(mealDto);
-    } 
+    }
 }

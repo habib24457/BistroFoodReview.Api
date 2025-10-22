@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BistroFoodReview.Api", "BistroFoodReview.Api\BistroFoodReview.Api.csproj", "{EB6488CD-E782-4628-8880-9B2F54A2F039}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{328D6CDB-125C-44C1-B25B-466B79ADD05F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BistroFoodReview.Api.Test", "BistroFoodReview.Api.Test\BistroFoodReview.Api.Test.csproj", "{6D3FBC56-F635-403D-B87C-5D55CE04A0EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,12 @@ Global
 		{EB6488CD-E782-4628-8880-9B2F54A2F039}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB6488CD-E782-4628-8880-9B2F54A2F039}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB6488CD-E782-4628-8880-9B2F54A2F039}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D3FBC56-F635-403D-B87C-5D55CE04A0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D3FBC56-F635-403D-B87C-5D55CE04A0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D3FBC56-F635-403D-B87C-5D55CE04A0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D3FBC56-F635-403D-B87C-5D55CE04A0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6D3FBC56-F635-403D-B87C-5D55CE04A0EC} = {328D6CDB-125C-44C1-B25B-466B79ADD05F}
 	EndGlobalSection
 EndGlobal

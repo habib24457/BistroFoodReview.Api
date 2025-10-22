@@ -7,11 +7,11 @@ namespace BistroFoodReview.Api.Repositories;
 public interface IMealRepository
 {
     public Task<List<Meal>> GetAllMealAsync();
+    public Task<List<MealOption>> GetAllMealOptionAsync();
     public Task<Meal> GetMealByIdAsync(Guid id);
     public Task<List<Meal>> GetTopMealsAsync();
-    public Task<List<Meal>> GetDailyMealMenuAsync(DateTime date);
-
-    public Task<Meal?> UpdateMealNameAsync(Guid mealId, Meal mealDomain);
+    public Task<List<Meal>> GetDailyMenuAsync(DateTime date);
+    public Task<Meal?> AddOrUpdateMealNameAsync(Guid mealId,Guid mealOptionId, DateTime mealDate, string editedMealName);
     //Autocomplete
 }
 
@@ -23,6 +23,11 @@ public class MealRepository(BistroReviewDbContext bistroReviewDbContext):IMealRe
             .Include(m => m.MealOption)
             .ToListAsync();
         return meals;
+    }
+
+    public async Task<List<MealOption>> GetAllMealOptionAsync()
+    {
+        return await bistroReviewDbContext.MealOptions.ToListAsync();
     }
 
     public async Task<Meal> GetMealByIdAsync(Guid id)
@@ -46,7 +51,7 @@ public class MealRepository(BistroReviewDbContext bistroReviewDbContext):IMealRe
         return topMeals;
     }
 
-    public async Task<List<Meal>> GetDailyMealMenuAsync(DateTime date)
+    public async Task<List<Meal>> GetDailyMenuAsync(DateTime date)
     {
         return await bistroReviewDbContext.Meals
             .Include(m => m.MealOption)
@@ -56,17 +61,27 @@ public class MealRepository(BistroReviewDbContext bistroReviewDbContext):IMealRe
             .ToListAsync();
     }
     
-    public async Task<Meal?> UpdateMealNameAsync(Guid mealId, Meal mealDomain)
+    public async Task<Meal?> AddOrUpdateMealNameAsync(Guid mealId,Guid mealOptionId, DateTime mealDate, string editedMealName)
     {
-        var meal = await bistroReviewDbContext.Meals
-            .Include(m => m.MealOption)
-            .FirstOrDefaultAsync(m => m.Id == mealId);
-
-        if (meal == null) return null;
+        var meal = await bistroReviewDbContext.Meals.FindAsync(mealId);
         
-        meal.EditedMealName = mealDomain.EditedMealName;
+        if (meal != null)
+        {
+            meal.EditedMealName = editedMealName;
+        }
+        else
+        {
+            meal = new Meal
+            {
+                Id = Guid.NewGuid(),
+                MealOptionId = mealOptionId,
+                Date = mealDate,
+                EditedMealName = editedMealName
+            };
+            bistroReviewDbContext.Meals.Add(meal);
+        }
+
         await bistroReviewDbContext.SaveChangesAsync();
         return meal;
     }
-
 }

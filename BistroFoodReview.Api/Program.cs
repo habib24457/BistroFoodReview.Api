@@ -40,7 +40,8 @@ using (var scope = app.Services.CreateScope())
     DbSeeder.InitializeSeeding(context);
 }*/
 
-/*Delete seeded data
+/*Delete seeded data*/
+/*
 using var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<BistroReviewDbContext>();
 
@@ -48,8 +49,8 @@ context.Ratings.RemoveRange(context.Ratings);
 context.Meals.RemoveRange(context.Meals);
 context.MealOptions.RemoveRange(context.MealOptions);
 context.Users.RemoveRange(context.Users);
-context.SaveChanges();
-Del end*/
+context.SaveChanges();*/
+
 
 if (app.Environment.IsDevelopment())
 {
