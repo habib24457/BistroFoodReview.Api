@@ -1,6 +1,5 @@
 Running the Project
 
-Step 0: Setup Database  
 Step 0: Setup Database
 1.	Make sure PostgreSQL is installed and running.
 2.	Create a database named bistrodb.
