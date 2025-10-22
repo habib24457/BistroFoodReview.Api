@@ -43,8 +43,8 @@ public static class DbSeeder
             var users = context.Users.ToList();
             context.Ratings.AddRange(
                 new Rating { Id = Guid.NewGuid(), MealId = meals[0].Id, UserId = users[0].Id, Stars = 4 },
-                new Rating { Id = Guid.NewGuid(), MealId = meals[2].Id, UserId = users[0].Id, Stars = 3 },
-                new Rating { Id = Guid.NewGuid(), MealId = meals[1].Id, UserId = users[1].Id, Stars = 4 },
+                new Rating { Id = Guid.NewGuid(), MealId = meals[2].Id, UserId = users[0].Id, Stars = 3.5 },
+                new Rating { Id = Guid.NewGuid(), MealId = meals[1].Id, UserId = users[1].Id, Stars = 4.5 },
                 new Rating { Id = Guid.NewGuid(), MealId = meals[0].Id, UserId = users[1].Id, Stars = 5 }
             );
             context.SaveChanges();

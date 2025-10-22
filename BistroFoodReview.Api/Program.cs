@@ -3,8 +3,16 @@ using BistroFoodReview.Api.Helpers;
 using BistroFoodReview.Api.Mappings;
 using BistroFoodReview.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("logs/bistro-api-.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+builder.Host.UseSerilog();
 
 builder.Services.AddCors(options =>
 {
@@ -33,12 +41,13 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 app.UseCors("AllowFrontend");
 
-/*Seed data
+/*Seed data*/
+
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BistroReviewDbContext>();
     DbSeeder.InitializeSeeding(context);
-}*/
+}
 
 /*Delete seeded data*/
 /*
@@ -61,4 +70,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.UseSerilogRequestLogging(); 
 app.Run();
