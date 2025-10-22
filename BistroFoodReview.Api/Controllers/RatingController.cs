@@ -18,7 +18,6 @@ public class RatingController(
     [HttpGet("allRatings")]
     public async Task<IActionResult> GetAllRatings()
     {
-        logger.LogInformation("Fetching all ratings");
         var ratings = await ratingRepository.GetAllRatingAsync();
         if (ratings == null)
         {
