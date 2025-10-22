@@ -1,0 +1,7 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=abdd452e_002D1273_002D4597_002D86dc_002Db805149f01bc/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetDailyMenu_ShouldReturnMealIfExists_ForTodaysDate" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::6D3FBC56-F635-403D-B87C-5D55CE04A0EC::net9.0::BistroFoodReview.Api.Test.Controllers.MealControllerTests.GetDailyMenu_ShouldReturnMealIfExists_ForTodaysDate&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6D3FBC56-F635-403D-B87C-5D55CE04A0EC::net9.0::BistroFoodReview.Api.Test.Controllers.MealControllerTests.GetDailyMenu_ShouldReturnOnlyMealsForToday&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
