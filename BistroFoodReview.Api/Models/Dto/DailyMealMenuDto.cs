@@ -6,5 +6,6 @@ public class DailyMealMenuDto
     public DateTime Date { get; set; }             
     public string MealOptionName { get; set; } = string.Empty; 
     public string? EditedMealName { get; set; }    
-    public double AverageRating { get; set; }  
+    
+    public List<RatingDto> Ratings { get; set; } = new();
 }
