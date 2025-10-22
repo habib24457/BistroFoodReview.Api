@@ -11,8 +11,8 @@ To run the API, connect to a local PostgreSQL instance and adjust the connection
 
 ```json
 "ConnectionStrings": {
-"DefaultConnection": "Host=localhost;Port=5432;Database=bistrodb;Username=habiburrahman;SSL Mode=Disable;Trust Server Certificate=true",
-"DockerConnection": "Host=host.docker.internal;Port=5432;Database=bistrodb;Username=habiburrahman;Password=mysecretpassword;SSL Mode=Disable;Trust Server Certificate=true"
+"DefaultConnection": "Host=localhost;Port=5432;Database=bistrodb;Username=yourusername;SSL Mode=Disable;Trust Server Certificate=true",
+"DockerConnection": "Host=host.docker.internal;Port=5432;Database=bistrodb;Username=yourusername;Password=mysecretpassword;SSL Mode=Disable;Trust Server Certificate=true"
 }
 ```
 Step 1: Clone the repository
