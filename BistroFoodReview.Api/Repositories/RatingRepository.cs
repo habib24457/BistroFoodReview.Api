@@ -7,7 +7,6 @@ namespace BistroFoodReview.Api.Repositories;
 public interface IRatingRepository
 {
     public Task<List<Rating>> GetAllRatingAsync();
-    public Task<Rating> GetRatingForUserByDateAsync(Guid userId, DateTime date);
     public Task<Rating> GetExistingRatingForUserAndMealOptionAsync(Guid userId, Guid mealOptionId);
     public Task<Rating> SaveRatingAsync(Rating rating);
 }
@@ -21,14 +20,6 @@ public class RatingRepository(BistroReviewDbContext bistroReviewDbContext):IRati
                 .ThenInclude(m => m.MealOption)
             .Include(r=>r.User)
             .ToListAsync();
-    }
-    
-    public async Task<Rating?> GetRatingForUserByDateAsync(Guid userId, DateTime date)
-    {
-        return await bistroReviewDbContext.Ratings
-            .Include(r => r.Meal)
-            .ThenInclude(m => m.MealOption) 
-            .FirstOrDefaultAsync(r => r.UserId == userId && r.Meal.Date.Date == date.Date);
     }
     
     public Task<Rating> GetExistingRatingForUserAndMealOptionAsync(Guid userId, Guid mealOptionId)
