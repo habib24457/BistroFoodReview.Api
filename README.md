@@ -53,10 +53,17 @@ How to test the endpoints
 1. How to insert a new rating for a meal?  
 -In swagger UI go to section rating and select Post request  
 /api/Rating/saveRating  
+
 - saveRating endpoint expects 3 arguments:  
-    userId: (which should be already in the db)  
-    mealId: (which should be already in the db)  
-    stars: which is a double you can choose between 1-5  
-- Note: to get the userId and mealId (for today). run endpoint (/api/User/allUsers)  
-for mealId run the endpoint (api/Meal/dailyMenu)  
+    userId: remove the default GUID id and you have to take from existing user (api/User/allUsers)
+    mealId: (you have to take from saved meal from existing meal (api/Meal/dailyMenu)  
+    stars: which is a double you can insert between 1-5  
+ 
+2. How to test autocomplete endpoint (/api/autocmplete)  
+- Enter any first letters from the existing meal names. The endpoint will return max 3  
+meal name suggestions in an arry, if there is exisitng mealName with the prefix.  
+- For example: If you seed the DB: there will be three meal name with EditName1, EditName2, EditName3  
+- If you enter in the endpoint 'ed' and execute. The endpoint will return the three meal names.  
+
+
 
