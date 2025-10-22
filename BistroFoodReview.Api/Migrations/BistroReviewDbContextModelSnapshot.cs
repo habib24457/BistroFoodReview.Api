@@ -68,8 +68,8 @@ namespace BistroFoodReview.Api.Migrations
                     b.Property<Guid>("MealId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Stars")
-                        .HasColumnType("integer");
+                    b.Property<double>("Stars")
+                        .HasColumnType("double precision");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
