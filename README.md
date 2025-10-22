@@ -1,15 +1,23 @@
-Running the Project
+# Running the Project
 
 Step 0: Setup Database
 1.	Make sure PostgreSQL is installed and running.
 2.	Create a database named bistrodb.
 
+Or:  
+A Dockerfile for the API is provided.
+Note: The PostgreSQL container via Docker Compose is not fully configured.
+To run the API, connect to a local PostgreSQL instance and adjust the connection string in appsettings.json and Program.cs.  
+
+```json
+"ConnectionStrings": {
+"DefaultConnection": "Host=localhost;Port=5432;Database=bistrodb;Username=habiburrahman;SSL Mode=Disable;Trust Server Certificate=true",
+"DockerConnection": "Host=host.docker.internal;Port=5432;Database=bistrodb;Username=habiburrahman;Password=mysecretpassword;SSL Mode=Disable;Trust Server Certificate=true"
+}
+```
 Step 1: Clone the repository
 - git clone  
-- Update the connection string in appsettings.json with your PostgreSQL username:  
-  "ConnectionStrings": {
-  "DefaultConnection": "Host=localhost;Port=5432;Database=bistrodb;Username=<YOUR_DB_USERNAME>;SSL Mode=Disable;Trust Server Certificate=true"
-  }
+- Update the connection string in appsettings.json with your PostgreSQL username:
 
 Step 2: Restore dependencies  
 - cd BistroFoodReview.Api
@@ -49,7 +57,7 @@ start testing the endpoints in swagger.  !!!
 
 --------------------------------------------  
 
-How to test the endpoints  
+# How to test the endpoints  
 1. How to insert a new rating for a meal?  
 -In swagger UI go to section rating and select Post request  
 /api/Rating/saveRating  
@@ -61,7 +69,7 @@ How to test the endpoints
  
 2. How to test autocomplete endpoint (/api/autocmplete)  
 - Enter any first letters from the existing meal names. The endpoint will return max 3  
-meal name suggestions in an arry, if there is exisitng mealName with the prefix.  
+meal name suggestions in an array, if there is exisitng mealName with the prefix.  
 - For example: If you seed the DB: there will be three meal name with EditName1, EditName2, EditName3  
 - If you enter in the endpoint 'ed' and execute. The endpoint will return the three meal names.  
 
