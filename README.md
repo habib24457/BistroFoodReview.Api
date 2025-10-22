@@ -35,9 +35,9 @@ Step 5: Run the API
 •	dotnet run  
 •	The API will be available at:  http://localhost:5175/swagger/index.html  
 
-Step 6: Run unit tests
-•	cd BistroFoodReview.Api.Test  
-•	dotnet test  
+
+
+
 --------------------------------------------  
 
 !!!Important: Initially the data database will be empty  
