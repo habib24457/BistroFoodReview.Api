@@ -1,5 +1,4 @@
 using BistroFoodReview.Api.Data;
-using BistroFoodReview.Api.Helpers;
 using BistroFoodReview.Api.Mappings;
 using BistroFoodReview.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:3001","http://localhost:3001") // Port 3000 is already taken by another service
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -40,25 +39,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.UseCors("AllowFrontend");
-
-/*Seed data*/
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<BistroReviewDbContext>();
-    DbSeeder.InitializeSeeding(context);
-}*/
-
-/*Delete seeded data*/
-/*
-using var scope = app.Services.CreateScope();
-var context = scope.ServiceProvider.GetRequiredService<BistroReviewDbContext>();
-context.Ratings.RemoveRange(context.Ratings);
-context.Meals.RemoveRange(context.Meals);
-context.MealOptions.RemoveRange(context.MealOptions);
-context.Users.RemoveRange(context.Users);
-context.SaveChanges();*/
-
 
 if (app.Environment.IsDevelopment())
 {

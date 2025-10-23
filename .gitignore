@@ -22,3 +22,6 @@ projectSettingsUpdater.xml
 # Other local files
 /httpRequests/
 /dataSources/
+/.vs/
+*/logs/
+*.user
