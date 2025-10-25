@@ -30,7 +30,7 @@ public class MealController(
         return Ok(mealOptionsDto);
     }
 
-    [HttpGet("topMeal")]
+    [HttpGet("topMeals")]
     public async Task<IActionResult> GetTopMeals()
     {
         var topMeals = await mealRepository.GetTopMealsAsync();

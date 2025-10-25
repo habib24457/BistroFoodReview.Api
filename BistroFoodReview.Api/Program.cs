@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3001","http://localhost:3001") // Port 3000 is already taken by another service
+            .WithOrigins("http://localhost:3000","http://localhost:3001") // Port 3000 is already taken by another service
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

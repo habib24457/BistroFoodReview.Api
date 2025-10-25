@@ -19,7 +19,9 @@ public class AutoMapperProfiles:Profile
             .ForMember(dest => dest.MealOptionName,
                 opt => opt.MapFrom(src => src.MealOption.Name))
             .ForMember(dest => dest.AverageRating,
-                opt => opt.MapFrom(src => src.Ratings.Any() ? src.Ratings.Average(r => r.Stars) : 0));
+                opt => opt.MapFrom(src => src.Ratings.Any() ? src.Ratings.Average(r => r.Stars) : 0))
+            .ForMember(dest => dest.EditedMealName,
+                opt => opt.MapFrom(src => src.EditedMealName ?? src.MealOption.Name));
         
         CreateMap<Meal, DailyMealMenuDto>()
             .ForMember(dest => dest.MealOptionName,
@@ -44,6 +46,7 @@ public class AutoMapperProfiles:Profile
         CreateMap<MealOption, MealOptionDto>();
 
         /*User Mapping*/
+        CreateMap<CreateUserDto, User>();
         CreateMap<User, UserDto>();
         CreateMap<User, UserWithRatingsDto>();
 

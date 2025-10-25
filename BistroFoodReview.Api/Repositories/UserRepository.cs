@@ -9,7 +9,7 @@ public interface IUserRepository
     Task<List<User>> GetAllUsersAsync();
     Task<User?> GetUserByIdAsync(Guid id);
     Task<User> AddUserAsync(User user);
-    Task DeleteUserAsync(Guid id); 
+    Task<User?> DeleteUserAsync(Guid id); 
 }
 
 public class UserRepository(BistroReviewDbContext bistroReviewDbContext):IUserRepository
@@ -27,21 +27,20 @@ public class UserRepository(BistroReviewDbContext bistroReviewDbContext):IUserRe
             .ThenInclude(m=>m.MealOption)
             .FirstOrDefaultAsync(u => u.Id == id);    
     }
-
+    
     public async Task<User> AddUserAsync(User user)
     {
         bistroReviewDbContext.Users.Add(user);
         await bistroReviewDbContext.SaveChangesAsync();
         return user;    
     }
-
-    public async Task DeleteUserAsync(Guid id)
+    
+    public async Task<User?> DeleteUserAsync(Guid id)
     {
         var user = await bistroReviewDbContext.Users.FindAsync(id);
-        if (user != null)
-        {
-            bistroReviewDbContext.Users.Remove(user);
-            await bistroReviewDbContext.SaveChangesAsync();
-        }    
+        if (user == null) return null;
+        bistroReviewDbContext.Users.Remove(user);
+        await bistroReviewDbContext.SaveChangesAsync();
+        return user;
     }
 }
