@@ -12,6 +12,79 @@ namespace BistroFoodReview.Api.Test.Controllers;
 public class MealControllerTests
 {
     [Fact]
+    public async Task GetAllMeals_ShouldReturnAllMeals()
+    {
+        // Arrange
+        var mealRepository = Substitute.For<IMealRepository>();
+        var mapper = Substitute.For<IMapper>();
+        var logger = Substitute.For<ILogger<MealController>>();
+
+        var meals = new List<Meal>
+        {
+            new Meal { Id = Guid.NewGuid(), EditedMealName = "Meal 1" },
+            new Meal { Id = Guid.NewGuid(), EditedMealName = "Meal 2" }
+        };
+
+        var mealsDto = meals.Select(m => new MealDto
+        {
+            EditedMealName = m.EditedMealName,
+            Date = m.Date,
+        }).ToList();
+
+        mealRepository.GetAllMealAsync().Returns(Task.FromResult(meals));
+        mapper.Map<List<MealDto>>(meals).Returns(mealsDto);
+
+        var controller = new MealController(mealRepository, mapper, logger);
+
+        // Act
+        var result = await controller.GetAllMeals();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnedMeals = Assert.IsAssignableFrom<List<MealDto>>(okResult.Value);
+        Assert.Equal(2, returnedMeals.Count);
+        Assert.Equal("Meal 1", returnedMeals[0].EditedMealName);
+        Assert.Equal("Meal 2", returnedMeals[1].EditedMealName);
+    }
+    
+    [Fact]
+    public async Task GetMealOptions_ShouldReturnAllMealOptions()
+    {
+        // Arrange
+        var mealRepository = Substitute.For<IMealRepository>();
+        var mapper = Substitute.For<IMapper>();
+        var logger = Substitute.For<ILogger<MealController>>();
+
+        var mealOptions = new List<MealOption>
+        {
+            new MealOption { Id = Guid.NewGuid(), Name = "Salad" },
+            new MealOption { Id = Guid.NewGuid(), Name = "Soup" }
+        };
+
+        var mealOptionsDto = mealOptions.Select(mo => new MealOptionDto
+        {
+            Id = mo.Id,
+            Name = mo.Name
+        }).ToList();
+
+        mealRepository.GetAllMealOptionAsync().Returns(Task.FromResult(mealOptions));
+        mapper.Map<List<MealOptionDto>>(mealOptions).Returns(mealOptionsDto);
+
+        var controller = new MealController(mealRepository, mapper, logger);
+
+        // Act
+        var result = await controller.GetMealOptions();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnedMealOptions = Assert.IsAssignableFrom<List<MealOptionDto>>(okResult.Value);
+
+        Assert.Equal(2, returnedMealOptions.Count);
+        Assert.Equal("Salad", returnedMealOptions[0].Name);
+        Assert.Equal("Soup", returnedMealOptions[1].Name);
+    }
+    
+    [Fact]
     public async Task GetDailyMenu_ShouldReturnOnlyMealsForToday()
     {
         // Arrange
@@ -221,5 +294,113 @@ public class MealControllerTests
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
         Assert.Equal("Meal Not Found", notFoundResult.Value);
         await mealRepo.Received(1).UpdateMealNameAsync(mealId, updatedName);
+    }
+    
+    [Fact]
+    public async Task UpdateMealName_ShouldReturnUpdatedMeal_WhenMealExists()
+    {
+        // Arrange
+        var mealRepository = Substitute.For<IMealRepository>();
+        var logger = Substitute.For<ILogger<MealController>>();
+        var mapper = Substitute.For<IMapper>();
+
+        var mealId = Guid.NewGuid();
+        var updatedMealDto = new UpdateMealNameDto
+        {
+            EditedMealName = "Updated Meal Name"
+        };
+
+        var updatedMeal = new Meal
+        {
+            Id = mealId,
+            EditedMealName = updatedMealDto.EditedMealName
+        };
+
+        mealRepository.UpdateMealNameAsync(mealId, updatedMealDto.EditedMealName)
+            .Returns(Task.FromResult(updatedMeal));
+
+        var controller = new MealController(mealRepository, mapper, logger);
+
+        // Act
+        var result = await controller.UpdateMealName(mealId, updatedMealDto);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnedMeal = Assert.IsType<Meal>(okResult.Value);
+        Assert.Equal(mealId, returnedMeal.Id);
+        Assert.Equal("Updated Meal Name", returnedMeal.EditedMealName);
+    }
+    
+    
+    [Fact]
+    public async Task UpdateMealName_ShouldReturnNotFound_WhenMealDoesNotExist()
+    {
+        // Arrange
+        var mealRepository = Substitute.For<IMealRepository>();
+        var logger = Substitute.For<ILogger<MealController>>();
+        var mapper = Substitute.For<IMapper>();
+
+        var mealId = Guid.NewGuid();
+        var updatedMealDto = new UpdateMealNameDto
+        {
+            EditedMealName = "Updated Meal Name"
+        };
+
+        mealRepository.UpdateMealNameAsync(mealId, updatedMealDto.EditedMealName)
+            .Returns(Task.FromResult<Meal>(null));
+
+        var controller = new MealController(mealRepository, mapper, logger);
+
+        // Act
+        var result = await controller.UpdateMealName(mealId, updatedMealDto);
+
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal("Meal Not Found", notFoundResult.Value);
+    }
+    
+    
+    [Fact]
+    public async Task Autocomplete_ShouldReturnMealNames_WhenQueryIsValid()
+    {
+        // Arrange
+        var mealRepository = Substitute.For<IMealRepository>();
+        var mapper = Substitute.For<IMapper>();
+        var logger = Substitute.For<ILogger<MealController>>();
+
+        var query = "Pizza";
+        var matchingNames = new List<string> { "Pizza Margherita", "Pizza Salami" };
+        mealRepository.GetMealNeamesForAutoCompleteByQuery(query)
+            .Returns(Task.FromResult(matchingNames));
+
+        var controller = new MealController(mealRepository,mapper, logger);
+
+        // Act
+        var result = await controller.Autocomplete(query);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnedList = Assert.IsAssignableFrom<List<AutoCompleteMealNameDto>>(okResult.Value);
+
+        Assert.Equal(2, returnedList.Count);
+        Assert.Equal("Pizza Margherita", returnedList[0].MealName);
+        Assert.Equal("Pizza Salami", returnedList[1].MealName);
+    }
+    
+    [Fact]
+    public async Task Autocomplete_ShouldReturnBadRequest_WhenQueryIsEmpty()
+    {
+        // Arrange
+        var mealRepository = Substitute.For<IMealRepository>();
+        var mapper = Substitute.For<IMapper>();
+        var logger = Substitute.For<ILogger<MealController>>();
+        var controller = new MealController(mealRepository, mapper, logger);
+
+        // Act
+        var result = await controller.Autocomplete("");
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Query cannot be empty.", badRequestResult.Value);
     }
 }
