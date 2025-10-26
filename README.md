@@ -36,6 +36,9 @@ services:
 ```
 Finally, run the API and the DB: docker compose up --build  
 --------------------------------------------------------------------
+Whether you choose to run locally or in a docker container, choose your connection string  
+and also update the name in the Program.cs in the Database connection.  
+
 ```json
 "ConnectionStrings": {
 "DefaultConnection": "Host=localhost;Port=5432;Database=bistrodb;Username=yourusername;SSL Mode=Disable;Trust Server Certificate=true",
