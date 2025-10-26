@@ -8,7 +8,34 @@ Or:
 A Dockerfile for the API is provided.
 Note: The PostgreSQL container via Docker Compose is not fully configured.
 To run the API, connect to a local PostgreSQL instance and adjust the connection string in appsettings.json and Program.cs.  
+- How to run the API with Docker:  
+1. Build the Docker Image: docker build -t bistrofoodreview-api  
+2. Run the docker container: docker run -p 5175:8080 bistrofoodreview-api  
+The API will be available at: http://localhost:5175/api  
 
+***Note:*** If you had a PostgreSQL database in Docker, add a docker-compose.yml like  
+
+```json
+version: '3.9'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: BistroReviewDb
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    ports:
+      - "5175:8080"
+    depends_on:
+      - db
+```
+Finally, run the API and the DB: docker compose up --build  
+--------------------------------------------------------------------
 ```json
 "ConnectionStrings": {
 "DefaultConnection": "Host=localhost;Port=5432;Database=bistrodb;Username=yourusername;SSL Mode=Disable;Trust Server Certificate=true",
