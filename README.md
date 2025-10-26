@@ -78,16 +78,14 @@ Step 5: Run the API
 
 --------------------------------------------  
 
-!!!Important: Initially the data database will be empty  
-I have created a helper class for initial seeding  
-to seed the database with data.  
-Go to: Program.cs file of the project.  
-uncomment line from 45-50. This will seed some data, so that you  
-start testing the endpoints in swagger.  !!!  
+!!!Important: Initially the data database will be empty.  
+After running the EFCore migration successfully, the database will be  
+populated with some initial data.!!!  
 
 --------------------------------------------  
 
 # How to test the endpoints  
+
 1. How to insert a new rating for a meal?  
 -In swagger UI go to section rating and select Post request  
 /api/Rating/saveRating  
