@@ -16,25 +16,44 @@ The API will be available at: http://localhost:5175/api
 ***Note:*** If you had a PostgreSQL database in Docker, add a docker-compose.yml like  
 
 ```json
-version: '3.9'
-services:
-  db:
-    image: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: BistroReviewDb
-    ports:
-      - "5432:5432"
+version: "3.9"
 
-  api:
-    build: .
-    ports:
-      - "5175:8080"
-    depends_on:
-      - db
+services:
+db:
+image: postgres:16
+container_name: postgres_db
+restart: always
+environment:
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD: password
+POSTGRES_DB: bistrodb
+ports:
+- "5432:5432"
+volumes:
+- postgres_data:/var/lib/postgresql/data
+healthcheck:
+test: ["CMD-SHELL", "pg_isready -U postgres"]
+interval: 10s
+timeout: 5s
+retries: 5
+
+api:
+build: .
+container_name: bistro_api
+ports:
+- "5175:8080"
+environment:
+- ASPNETCORE_ENVIRONMENT=Development
+- ConnectionStrings__DockerConnection=Host=db;Port=5432;Database=BistroReviewDb;Username=postgres;Password=password
+depends_on:
+db:
+condition: service_healthy
+
+volumes:
+postgres_data:
 ```
-Finally, run the API and the DB: docker compose up --build  
+Finally, run both the API and the DB with this command: docker compose up --build  
+
 --------------------------------------------------------------------
 Whether you choose to run locally or in a docker container, choose your connection string  
 and also update the name in the Program.cs in the Database connection.  
